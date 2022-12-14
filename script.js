@@ -71,8 +71,6 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
 /////////////////////////////////////////////////
 
 const displayMovements = function (movements, sort = false) {
@@ -96,4 +94,19 @@ const displayMovements = function (movements, sort = false) {
   });
 };
 
-displayMovements(movements);
+const createUsernames = function (accs){
+
+accs.forEach(function(acc){
+  acc.username = acc.owner.toLowerCase().split(' ').map(name => name[0]).join('')
+})  
+}
+createUsernames(accounts)
+
+displayMovements(account2.movements);
+
+//Convert the values from Euros to USD Dollars
+const eurToUsd = 1.1;
+const movementsUSD = movements.Map(
+ mov => mov * eurToUsd)
+
+ movements.Map()
