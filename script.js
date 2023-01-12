@@ -1,4 +1,5 @@
-'use strict';const preventFormating = 1;
+'use strict';
+const preventFormating = 1;
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // BANKIST APP// Dataconst
 const account1 = {
@@ -139,3 +140,37 @@ const deposits = movements.filter(mov => mov > 0);
 console.log(deposits);
 const withdrawls = movements.filter(mov => mov < 0);
 console.log(withdrawls);
+
+const totalDepositsUSD = movements
+  .filter(mov => mov > 0)
+  .map(mov => mov * eurToUsd)
+  .reduce((acc, mov) => acc + mov);
+
+console.log(
+  `%c ${totalDepositsUSD}`,
+  'color:white; background:black;border: 2px solid red; border-radius:5px;'
+);
+
+const calcDisplaySummary = function (movs) {
+  const incomes = movs
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}€`;
+
+  const out = movs.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+
+  const interest = movs
+    .filter(mov => mov > 0)
+    .map(mov => mov * 0.012)
+    .filter(int => int >= 1)
+    .reduce((acc, cur) => acc + cur, 0);
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+calcDisplaySummary(account1.movements);
+
+//FIND METHOD
+const firstEithdrawal = movements.find(mov => mov < 0);
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+console.log(account);
