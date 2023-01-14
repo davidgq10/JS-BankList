@@ -60,6 +60,41 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// EVENT HANDLER
+let currentAccount;
+btnLogin.addEventListener('click', function (e) {
+  //Prevent form from submitting
+  e.preventDefault();
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+
+  if (currentAccount.pin === Number(inputLoginPin.value));
+  {
+    console.log('LOGIN');
+
+    //Display UI and message
+    labelWelcome.textContent = `Welcomen back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+    containerApp.style.opacity = 100;
+    //Clear inputs fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+    //Display movements
+    displayMovements(currentAccount.movements);
+    //Display balance
+    calcDisplayBalance(currentAccount.movements);
+    //Display summary
+    calcDisplaySummary(currentAccount);
+  }
+
+  console.log(currentAccount);
+});
+
+const clStyle =
+  'color:white; background:black;border: 2px solid red; border-radius:5px;';
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -99,13 +134,11 @@ const calcDisplayBalance = function (movements) {
   labelBalance.textContent = `${balance} EUR`;
 };
 
-calcDisplayBalance(account1.movements);
-
 const max = movements.reduce(
   (acc, cur) => (acc > cur ? acc : cur),
   movements[0]
 );
-console.log(max);
+console.log(`%c ${max}`, clStyle);
 console.log('Hellow');
 
 const createUsernames = function (accs) {
@@ -119,8 +152,6 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 console.log(accounts);
-
-displayMovements(account2.movements);
 
 //Convert the values from Euros to USD Dollars
 const eurToUsd = 1.1;
@@ -146,29 +177,26 @@ const totalDepositsUSD = movements
   .map(mov => mov * eurToUsd)
   .reduce((acc, mov) => acc + mov);
 
-console.log(
-  `%c ${totalDepositsUSD}`,
-  'color:white; background:black;border: 2px solid red; border-radius:5px;'
-);
+console.log(`%c ${totalDepositsUSD}`, clStyle);
 
-const calcDisplaySummary = function (movs) {
-  const incomes = movs
+const calcDisplaySummary = function (acc) {
+  const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${incomes}€`;
 
-  const out = movs.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0);
+  const out = acc.movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(out)}€`;
 
-  const interest = movs
+  const interest = acc.movements
     .filter(mov => mov > 0)
-    .map(mov => mov * 0.012)
+    .map(mov => (mov * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, cur) => acc + cur, 0);
   labelSumInterest.textContent = `${interest}€`;
 };
-
-calcDisplaySummary(account1.movements);
 
 //FIND METHOD
 const firstEithdrawal = movements.find(mov => mov < 0);
