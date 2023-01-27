@@ -82,6 +82,8 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 // EVENT HANDLER
 let currentAccount;
+// FAKE ALWAYS LOGGED IN
+currentAccount = account1;
 
 const now = new Date();
 labelDate.textContent = now;
@@ -119,9 +121,11 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginPin.blur();
     updateUI(currentAccount);
   }
-
+  
   console.log(currentAccount);
 });
+
+
 
 function updateUI(acc) {
   //Display movements
@@ -173,8 +177,6 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 // LECTURES
 
-// FAKE ALWAYS LOGGED IN
-currentAccount = account1;
 
 const currencies = new Map([
   ['USD', 'United States dollar'],
@@ -182,40 +184,53 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
+
+const formatMovementDate = function (acc,){
+
+  const calcDisplayPassed = (date1, date2)=>{
+    Math.abs(date2-date1) / (1000*60*60*24)
+  }
+
+  const [day, month, year] = [
+    date.getDate(),
+    date.getMonth() + 1,
+    date.getFullYear(),
+  ];
+  return `${day}/${month}/${year}`;
+
+  
+}
 /////////////////////////////////////////////////
 
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
-
+  
   const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
+  ? acc.movements.slice().sort((a, b) => a - b)
+  : acc.movements;
+  
+  console.debug()
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+    
     const date = new Date(acc.movementsDates[i]);
-    const [day, month, year] = [
-      date.getDate(),
-      date.getMonth() + 1,
-      date.getFullYear(),
-    ];
-    const displayDate = `${day}/${month}/${year}`;
+    const displayDate = formatMovementDate(date)
+    
     const html = `
-      <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${
+    <div class="movements__row">
+    <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-      <div class="movements__date">${displayDate}€</div>
-        <div class="movements__value">${mov}€</div>
-      </div>
+    <div class="movements__date">${displayDate}€</div>
+    <div class="movements__value">${mov}€</div>
+    </div>
     `;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
 
-// FAKE ALWAYS LOGGED IN
-currentAccount = account1;
 updateUI(currentAccount);
 containerApp.style.opacity = 100;
 
