@@ -121,20 +121,9 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginPin.blur();
     updateUI(currentAccount);
   }
-  
+
   console.log(currentAccount);
 });
-
-
-
-function updateUI(acc) {
-  //Display movements
-  displayMovements(acc.movements);
-  //Display balance
-  calcDisplayBalance(acc);
-  //Display summary
-  calcDisplaySummary(acc);
-}
 
 const clStyle =
   'color:white; background:black;border: 2px solid red; border-radius:5px;';
@@ -177,51 +166,43 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 // LECTURES
 
-
 const currencies = new Map([
   ['USD', 'United States dollar'],
   ['EUR', 'Euro'],
   ['GBP', 'Pound sterling'],
 ]);
 
-
-const formatMovementDate = function (acc,){
-
-  const calcDisplayPassed = (date1, date2)=>{
-    Math.abs(date2-date1) / (1000*60*60*24)
-  }
-
+function formatMovementDate(acc) {
+  const calcDisplayPassed = (date1, date2) => {
+    Math.abs(date2 - date1) / (1000 * 60 * 60 * 24);
+  };
   const [day, month, year] = [
     date.getDate(),
     date.getMonth() + 1,
     date.getFullYear(),
   ];
   return `${day}/${month}/${year}`;
-
-  
 }
 /////////////////////////////////////////////////
 
-const displayMovements = function (acc, sort = false) {
+function displayMovements(acc, sort = false) {
   containerMovements.innerHTML = '';
-  
+
   const movs = sort
-  ? acc.movements.slice().sort((a, b) => a - b)
-  : acc.movements;
-  
-  console.debug()
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
+
+  console.debug();
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
-    
+
     const date = new Date(acc.movementsDates[i]);
-    const displayDate = formatMovementDate(date)
-    
+    const displayDate = formatMovementDate(date);
+
     const html = `
     <div class="movements__row">
-    <div class="movements__type movements__type--${type}">${
-      i + 1
-    } ${type}</div>
+    <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
     <div class="movements__date">${displayDate}€</div>
     <div class="movements__value">${mov}€</div>
     </div>
@@ -229,18 +210,21 @@ const displayMovements = function (acc, sort = false) {
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
-};
+}
 
-updateUI(currentAccount);
 containerApp.style.opacity = 100;
-
+const [day, month, year] = [
+  date.getDate(),
+  date.getMonth() + 1,
+  date.getFullYear(),
+];
 labelDate.textContent = `${day}/${month}/${year} ${hour}:${min}`;
 
-const calcDisplayBalance = function (acc) {
+function calcDisplayBalance(acc) {
   acc.balance = acc.movements.reduce((acc, curr) => acc + curr, 0);
   console.log(acc.balance);
   labelBalance.textContent = `${acc.balance} EUR`;
-};
+}
 
 const max = movements.reduce(
   (acc, cur) => (acc > cur ? acc : cur),
@@ -287,7 +271,7 @@ const totalDepositsUSD = movements
 
 console.log(`%c ${totalDepositsUSD}`, clStyle);
 
-const calcDisplaySummary = function (acc) {
+function calcDisplaySummary(acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
@@ -304,7 +288,7 @@ const calcDisplaySummary = function (acc) {
     .filter(int => int >= 1)
     .reduce((acc, cur) => acc + cur, 0);
   labelSumInterest.textContent = `${interest}€`;
-};
+}
 
 //FIND METHOD
 const firstEithdrawal = movements.find(mov => mov < 0);
@@ -332,6 +316,16 @@ btnTransfer.addEventListener('click', function (e) {
   }
 });
 
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
+function updateUI(acc) {
+  //Display movements
+  displayMovements(acc);
+  //Display balance
+  calcDisplayBalance(acc);
+  //Display summary
+  calcDisplaySummary(acc);
+}
 ///////////////////////////////////////
 // flat and flatMap
 const arr = [[1, 2, 3], [4, 5, 6], 7, 8];
